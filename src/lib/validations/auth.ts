@@ -25,3 +25,20 @@ export const signupSchema = z.object({
 .strict();
 
 export type SignupInput = z.infer<typeof signupSchema>;
+
+export const loginSchema = z
+  .object({
+    email: z
+      .string()
+      .trim()
+      .email("올바른 이메일 형식이 아닙니다.")
+      .max(254, "이메일이 너무 깁니다."),
+
+    password: z
+      .string()
+      .min(1, "비밀번호를 입력해주세요.")
+      .max(128, "비밀번호가 너무 깁니다."),
+  })
+  .strict();
+
+export type LoginInput = z.infer<typeof loginSchema>;
