@@ -16,14 +16,13 @@ export async function createTransfer(
 
   return prisma.$transaction(async (tx) => {
     const sender = await tx.user.findUnique({
-      where: {
+    where: {
         id: senderId,
-      },
-      select: {
+    },
+    select: {
         id: true,
-        balance: true,
         status: true,
-      },
+    },
     });
 
     if (!sender || sender.status !== UserStatus.ACTIVE) {
@@ -44,21 +43,23 @@ export async function createTransfer(
       throw new ReceiverNotFoundError("받는 사용자를 찾을 수 없습니다.");
     }
 
-    if (sender.balance < input.amount) {
-      throw new InsufficientBalanceError("잔액이 부족합니다.");
-    }
-
-    await tx.user.update({
-      where: {
-        id: sender.id,
-      },
-      data: {
-        balance: {
-          decrement: input.amount,
+    const decrementResult = await tx.user.updateMany({
+        where: {
+            id: sender.id,
+            balance: {
+            gte: input.amount,
+            },
         },
-      },
-    });
+        data: {
+            balance: {
+            decrement: input.amount,
+            },
+        },
+        });
 
+        if (decrementResult.count !== 1) {
+        throw new InsufficientBalanceError("잔액이 부족합니다.");
+        }
     await tx.user.update({
       where: {
         id: receiver.id,
