@@ -71,6 +71,24 @@ export default async function ProductDetailPage({
 
           {canContactSeller && <StartConversationForm productId={product.id} />}
 
+          {canContactSeller && product.status === "SELLING" && (
+            <section>
+              <h2>구매하기</h2>
+              <p>
+                구매 버튼을 누르면 결제 확인 페이지로 이동합니다. 결제 후
+                상품은 예약 상태가 됩니다.
+              </p>
+              <div className="action-row">
+                <Link
+                  href={`/products/${product.id}/checkout`}
+                  className="button-link"
+                >
+                  구매
+                </Link>
+              </div>
+            </section>
+          )}
+
           {!session?.user?.id && (
             <section>
               <p>

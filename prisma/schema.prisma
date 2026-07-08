@@ -29,6 +29,13 @@ enum ProductStatus {
   BLOCKED
 }
 
+enum PurchaseStatus {
+  RESERVED
+  COMPLETED
+  CANCEL_REQUESTED
+  CANCELED
+}
+
 model User {
   id           String     @id @default(cuid())
   email        String     @unique
@@ -48,6 +55,8 @@ model User {
 
   sentTransfers     Transfer[] @relation("SentTransfers")
   receivedTransfers Transfer[] @relation("ReceivedTransfers")
+  purchases         Purchase[] @relation("BuyerPurchases")
+  sales             Purchase[] @relation("SellerPurchases")
 }
 
 model Product {
@@ -64,6 +73,7 @@ model Product {
   seller User @relation(fields: [sellerId], references: [id], onDelete: Restrict)
 
   conversations Conversation[]
+  purchases     Purchase[]
 
   @@index([sellerId])
   @@index([status, createdAt])
@@ -116,4 +126,26 @@ model Transfer {
 
   @@index([senderId, createdAt])
   @@index([receiverId, createdAt])
+}
+
+model Purchase {
+  id                String         @id @default(cuid())
+  productId         String
+  buyerId           String
+  sellerId          String
+  amount            Int
+  status            PurchaseStatus @default(RESERVED)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  completedAt       DateTime?
+  cancelRequestedAt DateTime?
+  canceledAt        DateTime?
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  buyer   User    @relation("BuyerPurchases", fields: [buyerId], references: [id], onDelete: Restrict)
+  seller  User    @relation("SellerPurchases", fields: [sellerId], references: [id], onDelete: Restrict)
+
+  @@index([productId, status])
+  @@index([buyerId, createdAt])
+  @@index([sellerId, createdAt])
 }

@@ -146,6 +146,56 @@ export async function getMyWallet(userId: string) {
           },
         },
       },
+      purchases: {
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 10,
+        select: {
+          id: true,
+          amount: true,
+          status: true,
+          createdAt: true,
+          product: {
+            select: {
+              id: true,
+              title: true,
+              status: true,
+            },
+          },
+          seller: {
+            select: {
+              id: true,
+              nickname: true,
+            },
+          },
+        },
+      },
+      sales: {
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 10,
+        select: {
+          id: true,
+          amount: true,
+          status: true,
+          createdAt: true,
+          product: {
+            select: {
+              id: true,
+              title: true,
+              status: true,
+            },
+          },
+          buyer: {
+            select: {
+              id: true,
+              nickname: true,
+            },
+          },
+        },
+      },
     },
   });
 
