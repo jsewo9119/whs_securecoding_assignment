@@ -41,6 +41,10 @@ model User {
   updatedAt    DateTime   @updatedAt
 
   products Product[]
+
+  sellingConversations Conversation[] @relation("SellerConversations")
+  buyingConversations  Conversation[] @relation("BuyerConversations")
+  messages             Message[]
 }
 
 model Product {
@@ -56,6 +60,42 @@ model Product {
 
   seller User @relation(fields: [sellerId], references: [id], onDelete: Restrict)
 
+  conversations Conversation[]
+
   @@index([sellerId])
   @@index([status, createdAt])
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  productId String
+  sellerId  String
+  buyerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  seller  User    @relation("SellerConversations", fields: [sellerId], references: [id], onDelete: Restrict)
+  buyer   User    @relation("BuyerConversations", fields: [buyerId], references: [id], onDelete: Restrict)
+
+  messages Message[]
+
+  @@unique([productId, sellerId, buyerId])
+  @@index([sellerId, updatedAt])
+  @@index([buyerId, updatedAt])
+  @@index([productId])
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String
+  createdAt      DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Restrict)
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
 }

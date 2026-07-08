@@ -29,6 +29,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
       <nav>
         <Link href="/products/new">상품 등록</Link>
+        <Link href="/conversations">내 대화</Link>
       </nav>
 
       <ProductsSearchForm defaultQuery={q} />

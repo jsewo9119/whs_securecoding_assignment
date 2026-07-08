@@ -4,6 +4,7 @@ import { getPublicProductById } from "@/services/product.service";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
 import { ProductActions } from "./ProductActions";
+import { StartConversationForm } from "./StartConversationForm";
 
 type ProductDetailPageProps = {
   params: Promise<{
@@ -24,6 +25,7 @@ export default async function ProductDetailPage({
 
   const session = await getServerSession(authOptions);
   const isSeller = session?.user?.id === product.seller.id;
+  const canContactSeller = session?.user?.id && !isSeller;
 
   return (
     <main>
@@ -46,6 +48,13 @@ export default async function ProductDetailPage({
         <ProductActions productId={product.id} currentStatus={product.status} />
         )}
       <p>등록일: {product.createdAt.toLocaleString("ko-KR")}</p>
+      {canContactSeller && <StartConversationForm productId={product.id} />}
+      {!session?.user?.id && (
+        <p>
+            문의하려면 <Link href={`/login?callbackUrl=/products/${product.id}`}>로그인</Link>
+            이 필요합니다.
+        </p>
+        )}
     </main>
   );
 }
