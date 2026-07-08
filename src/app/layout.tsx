@@ -40,6 +40,7 @@ export default function RootLayout({
             <Link href="/conversations">내 대화</Link>
             <Link href="/transfers/new">송금</Link>
             <Link href="/mypage">마이페이지</Link>
+            <Link href="/admin">관리자</Link>
             <Link href="/login">로그인</Link>
           </nav>
         </header>
