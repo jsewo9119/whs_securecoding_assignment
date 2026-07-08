@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import { getServerSession } from "next-auth";
+import { Role } from "@/generated/prisma/client";
+import { authOptions } from "@/lib/auth/options";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,11 +21,13 @@ export const metadata: Metadata = {
   description: "Tiny second-hand shopping platform",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+  const isAdmin = session?.user?.role === Role.ADMIN;
   return (
     <html
       lang="ko"
@@ -40,7 +45,7 @@ export default function RootLayout({
             <Link href="/conversations">내 대화</Link>
             <Link href="/transfers/new">송금</Link>
             <Link href="/mypage">마이페이지</Link>
-            <Link href="/admin">관리자</Link>
+            {isAdmin && <Link href="/admin">관리자</Link>}
             <Link href="/login">로그인</Link>
           </nav>
         </header>
