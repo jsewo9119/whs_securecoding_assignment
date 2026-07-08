@@ -17,11 +17,11 @@ export default async function MyPage() {
     <main>
       <h1>마이페이지</h1>
 
-      <section>
+      <section className="wallet-card">
         <h2>내 정보</h2>
         <p>닉네임: {wallet.nickname}</p>
         <p>이메일: {wallet.email}</p>
-        <p>잔액: {wallet.balance.toLocaleString()}원</p>
+        <p className="wallet-balance">{wallet.balance.toLocaleString()}원</p>
 
         <div className="action-row">
           <Link href="/transfers/new" className="button-link">

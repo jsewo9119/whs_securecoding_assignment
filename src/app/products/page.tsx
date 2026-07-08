@@ -25,29 +25,43 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   return (
     <main>
-      <h1>상품 목록</h1>
+      <section className="hero">
+        <p className="eyebrow">Market</p>
+        <h1>상품 목록</h1>
+        <p>마음에 드는 상품을 찾고, 판매자에게 문의해보세요.</p>
 
-      <nav>
-        <Link href="/products/new">상품 등록</Link>
-        <Link href="/conversations">내 대화</Link>
-      </nav>
+        <div className="action-row">
+          <Link href="/products/new" className="button-link">
+            상품 등록
+          </Link>
+          <Link href="/conversations" className="button-link secondary-button">
+            내 대화
+          </Link>
+        </div>
+      </section>
 
       <ProductsSearchForm defaultQuery={q} />
 
       {products.length === 0 ? (
-        <p>등록된 상품이 없습니다.</p>
+        <div className="empty-state">
+          <p>등록된 상품이 없습니다.</p>
+        </div>
       ) : (
-        <ul>
+        <ul className="product-grid">
           {products.map((product) => (
-            <li key={product.id}>
+            <li key={product.id} className="product-card">
               <Link href={`/products/${product.id}`}>
-                <h2>{product.title}</h2>
+                <h2 className="product-title">{product.title}</h2>
               </Link>
 
-              <p>{product.description}</p>
-              <p>{product.price.toLocaleString()}원</p>
-              <p>판매자: {product.seller.nickname}</p>
-              <p>상태: {product.status}</p>
+              <p className="product-description">{product.description}</p>
+              <p className="price">{product.price.toLocaleString()}원</p>
+              <div className="meta-row">
+                <span className="badge">판매자 {product.seller.nickname}</span>
+                <span className={`badge badge-${product.status.toLowerCase()}`}>
+                  {product.status}
+                </span>
+              </div>
             </li>
           ))}
         </ul>

@@ -33,28 +33,57 @@ export default async function ProductDetailPage({
         <Link href="/products">상품 목록으로</Link>
       </nav>
 
-      <h1>{product.title}</h1>
+      <div className="detail-layout">
+        <section className="detail-panel">
+          {product.imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={product.imageUrl} alt={product.title} width={720} />
+          ) : (
+            <div className="image-placeholder">상품 이미지 없음</div>
+          )}
 
-      {product.imageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={product.imageUrl} alt={product.title} width={320} />
-      )}
+          <div>
+            <p className="eyebrow">Description</p>
+            <p>{product.description}</p>
+          </div>
+        </section>
 
-      <p>{product.description}</p>
-      <p>{product.price.toLocaleString()}원</p>
-      <p>상태: {product.status}</p>
-      <p>판매자: {product.seller.nickname}</p>
-      {isSeller && (
-        <ProductActions productId={product.id} currentStatus={product.status} />
-        )}
-      <p>등록일: {product.createdAt.toLocaleString("ko-KR")}</p>
-      {canContactSeller && <StartConversationForm productId={product.id} />}
-      {!session?.user?.id && (
-        <p>
-            문의하려면 <Link href={`/login?callbackUrl=/products/${product.id}`}>로그인</Link>
-            이 필요합니다.
-        </p>
-        )}
+        <aside className="detail-panel">
+          <section>
+            <div className="meta-row">
+              <span className={`badge badge-${product.status.toLowerCase()}`}>
+                {product.status}
+              </span>
+              <span className="badge">판매자 {product.seller.nickname}</span>
+            </div>
+
+            <h1>{product.title}</h1>
+            <p className="price">{product.price.toLocaleString()}원</p>
+            <p>등록일: {product.createdAt.toLocaleString("ko-KR")}</p>
+          </section>
+
+          {isSeller && (
+            <ProductActions
+              productId={product.id}
+              currentStatus={product.status}
+            />
+          )}
+
+          {canContactSeller && <StartConversationForm productId={product.id} />}
+
+          {!session?.user?.id && (
+            <section>
+              <p>
+                문의하려면{" "}
+                <Link href={`/login?callbackUrl=/products/${product.id}`}>
+                  로그인
+                </Link>
+                이 필요합니다.
+              </p>
+            </section>
+          )}
+        </aside>
+      </div>
     </main>
   );
 }
