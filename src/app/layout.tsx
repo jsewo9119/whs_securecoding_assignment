@@ -27,6 +27,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
+  const isLoggedIn = Boolean(session?.user?.id);
   const isAdmin = session?.user?.role === Role.ADMIN;
   return (
     <html
@@ -38,16 +39,27 @@ export default async function RootLayout({
           <Link href="/" className="site-logo">
             Tiny Market
           </Link>
+            <nav className="site-nav" aria-label="주요 메뉴">
+              <Link href="/products">상품</Link>
 
-          <nav className="site-nav" aria-label="주요 메뉴">
-            <Link href="/products">상품</Link>
-            <Link href="/products/new">상품 등록</Link>
-            <Link href="/conversations">내 대화</Link>
-            <Link href="/transfers/new">송금</Link>
-            <Link href="/mypage">마이페이지</Link>
-            {isAdmin && <Link href="/admin">관리자</Link>}
-            <Link href="/login">로그인</Link>
-          </nav>
+              {isLoggedIn ? (
+                <>
+                  <Link href="/products/new">상품 등록</Link>
+                  <Link href="/conversations">내 대화</Link>
+                  <Link href="/transfers/new">송금</Link>
+                  <Link href="/mypage">마이페이지</Link>
+
+                  {isAdmin && <Link href="/admin">관리자</Link>}
+
+                  <Link href="/api/auth/signout">로그아웃</Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/signup">회원가입</Link>
+                  <Link href="/login">로그인</Link>
+                </>
+              )}
+            </nav>
         </header>
 
         <div className="page-shell">{children}</div>
