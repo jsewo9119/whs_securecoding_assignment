@@ -38,6 +38,8 @@ export default function RootLayout({
             <Link href="/products">상품</Link>
             <Link href="/products/new">상품 등록</Link>
             <Link href="/conversations">내 대화</Link>
+            <Link href="/transfers/new">송금</Link>
+            <Link href="/mypage">마이페이지</Link>
             <Link href="/login">로그인</Link>
           </nav>
         </header>

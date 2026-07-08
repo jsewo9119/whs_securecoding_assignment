@@ -45,6 +45,9 @@ model User {
   sellingConversations Conversation[] @relation("SellerConversations")
   buyingConversations  Conversation[] @relation("BuyerConversations")
   messages             Message[]
+
+  sentTransfers     Transfer[] @relation("SentTransfers")
+  receivedTransfers Transfer[] @relation("ReceivedTransfers")
 }
 
 model Product {
@@ -98,4 +101,19 @@ model Message {
 
   @@index([conversationId, createdAt])
   @@index([senderId])
+}
+
+model Transfer {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  amount     Int
+  memo       String?
+  createdAt  DateTime @default(now())
+
+  sender   User @relation("SentTransfers", fields: [senderId], references: [id], onDelete: Restrict)
+  receiver User @relation("ReceivedTransfers", fields: [receiverId], references: [id], onDelete: Restrict)
+
+  @@index([senderId, createdAt])
+  @@index([receiverId, createdAt])
 }
