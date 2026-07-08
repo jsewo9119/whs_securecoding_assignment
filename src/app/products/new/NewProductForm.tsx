@@ -20,6 +20,7 @@ export function NewProductForm() {
       description: formData.get("description"),
       price: Number(formData.get("price")),
       imageUrl: formData.get("imageUrl") || undefined,
+      isNegotiable: formData.get("isNegotiable") === "on",
     };
 
     const response = await fetch("/api/products", {
@@ -63,6 +64,13 @@ export function NewProductForm() {
       <div>
         <label htmlFor="imageUrl">이미지 URL</label>
         <input id="imageUrl" name="imageUrl" type="url" maxLength={2048} />
+      </div>
+
+      <div>
+        <label htmlFor="isNegotiable">
+          <input id="isNegotiable" name="isNegotiable" type="checkbox" />
+          흥정 가능
+        </label>
       </div>
 
       {errorMessage && <p>{errorMessage}</p>}

@@ -1,14 +1,23 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth/options";
-import { startConversationSchema } from "@/lib/validations/message";
+import { createOfferSchema } from "@/lib/validations/message";
 import {
-  ConversationNotAllowedError,
-  ProductNotFoundForConversationError,
-  startConversation,
-} from "@/services/conversation.service";
+  createOffer,
+  OfferNotAllowedError,
+  OfferNotFoundError,
+} from "@/services/offer.service";
 
-export async function POST(request: Request) {
+type ProductOffersRouteContext = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export async function POST(
+  request: Request,
+  context: ProductOffersRouteContext,
+) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -38,7 +47,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const result = startConversationSchema.safeParse(body);
+  const result = createOfferSchema.safeParse(body);
 
   if (!result.success) {
     return NextResponse.json(
@@ -50,27 +59,28 @@ export async function POST(request: Request) {
     );
   }
 
+  const { id } = await context.params;
+
   try {
-    const resultData = await startConversation(session.user.id, result.data);
+    const offerResult = await createOffer(id, session.user.id, result.data);
 
     return NextResponse.json(
       {
-        message: "문의 메시지가 전송되었습니다.",
-        conversation: resultData.conversation,
-        sentMessage: resultData.message,
+        message: "흥정 요청이 전송되었습니다.",
+        ...offerResult,
       },
       { status: 201 },
     );
   } catch (error) {
-    if (error instanceof ProductNotFoundForConversationError) {
+    if (error instanceof OfferNotFoundError) {
       return NextResponse.json({ message: error.message }, { status: 404 });
     }
 
-    if (error instanceof ConversationNotAllowedError) {
-      return NextResponse.json({ message: error.message }, { status: 403 });
+    if (error instanceof OfferNotAllowedError) {
+      return NextResponse.json({ message: error.message }, { status: 400 });
     }
 
-    console.error("대화 시작 실패:", error);
+    console.error("흥정 요청 실패:", error);
 
     return NextResponse.json(
       { message: "서버 오류가 발생했습니다." },

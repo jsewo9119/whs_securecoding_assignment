@@ -13,6 +13,7 @@ export async function createProduct(
       description: input.description,
       price: input.price,
       imageUrl: input.imageUrl,
+      isNegotiable: input.isNegotiable,
     },
     select: {
       id: true,
@@ -21,6 +22,7 @@ export async function createProduct(
       price: true,
       imageUrl: true,
       status: true,
+      isNegotiable: true,
       createdAt: true,
       seller: {
         select: {
@@ -79,6 +81,7 @@ export async function listProducts(params: ListProductsParams = {}) {
       price: true,
       imageUrl: true,
       status: true,
+      isNegotiable: true,
       createdAt: true,
       seller: {
         select: {
@@ -105,6 +108,7 @@ export async function getPublicProductById(productId: string) {
       price: true,
       imageUrl: true,
       status: true,
+      isNegotiable: true,
       createdAt: true,
       updatedAt: true,
       seller: {
@@ -156,6 +160,7 @@ export async function updateProduct(
       price: true,
       imageUrl: true,
       status: true,
+      isNegotiable: true,
       updatedAt: true,
     },
   });
@@ -202,6 +207,7 @@ export async function getProductForEdit(productId: string, sellerId: string) {
       price: true,
       imageUrl: true,
       status: true,
+      isNegotiable: true,
     },
   });
 

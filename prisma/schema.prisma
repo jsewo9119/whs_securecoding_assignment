@@ -36,6 +36,12 @@ enum PurchaseStatus {
   CANCELED
 }
 
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
 model User {
   id           String     @id @default(cuid())
   email        String     @unique
@@ -57,23 +63,27 @@ model User {
   receivedTransfers Transfer[] @relation("ReceivedTransfers")
   purchases         Purchase[] @relation("BuyerPurchases")
   sales             Purchase[] @relation("SellerPurchases")
+  sentOffers        Offer[]    @relation("BuyerOffers")
+  receivedOffers    Offer[]    @relation("SellerOffers")
 }
 
 model Product {
-  id          String        @id @default(cuid())
-  sellerId    String
-  title       String
-  description String
-  price       Int
-  imageUrl    String?
-  status      ProductStatus @default(SELLING)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id           String        @id @default(cuid())
+  sellerId     String
+  title        String
+  description  String
+  price        Int
+  imageUrl     String?
+  status       ProductStatus @default(SELLING)
+  isNegotiable Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   seller User @relation(fields: [sellerId], references: [id], onDelete: Restrict)
 
   conversations Conversation[]
   purchases     Purchase[]
+  offers        Offer[]
 
   @@index([sellerId])
   @@index([status, createdAt])
@@ -92,6 +102,7 @@ model Conversation {
   buyer   User    @relation("BuyerConversations", fields: [buyerId], references: [id], onDelete: Restrict)
 
   messages Message[]
+  offers   Offer[]
 
   @@unique([productId, sellerId, buyerId])
   @@index([sellerId, updatedAt])
@@ -148,4 +159,29 @@ model Purchase {
   @@index([productId, status])
   @@index([buyerId, createdAt])
   @@index([sellerId, createdAt])
+}
+
+model Offer {
+  id             String      @id @default(cuid())
+  productId      String
+  buyerId        String
+  sellerId       String
+  conversationId String?
+  proposedPrice  Int
+  message        String?
+  status         OfferStatus @default(PENDING)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  acceptedAt     DateTime?
+  rejectedAt     DateTime?
+
+  product      Product       @relation(fields: [productId], references: [id], onDelete: Restrict)
+  buyer        User          @relation("BuyerOffers", fields: [buyerId], references: [id], onDelete: Restrict)
+  seller       User          @relation("SellerOffers", fields: [sellerId], references: [id], onDelete: Restrict)
+  conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+
+  @@index([productId, status])
+  @@index([buyerId, createdAt])
+  @@index([sellerId, createdAt])
+  @@index([conversationId])
 }

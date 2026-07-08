@@ -61,6 +61,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 <span className={`badge badge-${product.status.toLowerCase()}`}>
                   {product.status}
                 </span>
+                {product.isNegotiable && <span className="badge">흥정 가능</span>}
               </div>
             </li>
           ))}

@@ -27,3 +27,21 @@ export const sendMessageSchema = z
   .strict();
 
 export type SendMessageInput = z.infer<typeof sendMessageSchema>;
+
+export const createOfferSchema = z
+  .object({
+    proposedPrice: z
+      .number()
+      .int("흥정 가격은 정수여야 합니다.")
+      .min(1, "흥정 가격은 1원 이상이어야 합니다.")
+      .max(100_000_000, "흥정 가격이 너무 큽니다."),
+
+    message: z
+      .string()
+      .trim()
+      .max(500, "흥정 메시지는 500자 이하여야 합니다.")
+      .optional(),
+  })
+  .strict();
+
+export type CreateOfferInput = z.infer<typeof createOfferSchema>;

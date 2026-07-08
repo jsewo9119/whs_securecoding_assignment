@@ -130,6 +130,31 @@ export async function getConversationDetail(
           },
         },
       },
+      offers: {
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: {
+          id: true,
+          proposedPrice: true,
+          message: true,
+          status: true,
+          createdAt: true,
+          acceptedAt: true,
+          buyer: {
+            select: {
+              id: true,
+              nickname: true,
+            },
+          },
+          seller: {
+            select: {
+              id: true,
+              nickname: true,
+            },
+          },
+        },
+      },
     },
   });
 

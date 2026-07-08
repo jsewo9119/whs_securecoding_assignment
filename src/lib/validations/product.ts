@@ -27,6 +27,8 @@ export const createProductSchema = z
       .url("올바른 이미지 URL 형식이 아닙니다.")
       .max(2048, "이미지 URL이 너무 깁니다.")
       .optional(),
+
+    isNegotiable: z.boolean().optional().default(false),
   })
   .strict();
 

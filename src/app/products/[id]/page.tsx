@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/options";
 import { ProductActions } from "./ProductActions";
 import { StartConversationForm } from "./StartConversationForm";
+import { NegotiationForm } from "./NegotiationForm";
 
 type ProductDetailPageProps = {
   params: Promise<{
@@ -54,6 +55,7 @@ export default async function ProductDetailPage({
               <span className={`badge badge-${product.status.toLowerCase()}`}>
                 {product.status}
               </span>
+              {product.isNegotiable && <span className="badge">흥정 가능</span>}
               <span className="badge">판매자 {product.seller.nickname}</span>
             </div>
 
@@ -88,6 +90,15 @@ export default async function ProductDetailPage({
               </div>
             </section>
           )}
+
+          {canContactSeller &&
+            product.status === "SELLING" &&
+            product.isNegotiable && (
+              <NegotiationForm
+                productId={product.id}
+                currentPrice={product.price}
+              />
+            )}
 
           {!session?.user?.id && (
             <section>

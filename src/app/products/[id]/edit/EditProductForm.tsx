@@ -9,6 +9,7 @@ type EditableProduct = {
   description: string;
   price: number;
   imageUrl: string | null;
+  isNegotiable: boolean;
 };
 
 type EditProductFormProps = {
@@ -32,6 +33,7 @@ export function EditProductForm({ product }: EditProductFormProps) {
       description: formData.get("description"),
       price: Number(formData.get("price")),
       imageUrl: formData.get("imageUrl") || undefined,
+      isNegotiable: formData.get("isNegotiable") === "on",
     };
 
     const response = await fetch(`/api/products/${product.id}`, {
@@ -104,6 +106,18 @@ export function EditProductForm({ product }: EditProductFormProps) {
           maxLength={2048}
           defaultValue={product.imageUrl ?? ""}
         />
+      </div>
+
+      <div>
+        <label htmlFor="isNegotiable">
+          <input
+            id="isNegotiable"
+            name="isNegotiable"
+            type="checkbox"
+            defaultChecked={product.isNegotiable}
+          />
+          흥정 가능
+        </label>
       </div>
 
       {errorMessage && <p>{errorMessage}</p>}

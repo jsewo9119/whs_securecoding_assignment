@@ -23,46 +23,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     redirect(`/login?callbackUrl=/products/${id}/checkout`);
   }
 
+  let checkoutData: Awaited<ReturnType<typeof getCheckoutProduct>>;
+
   try {
-    const { product, buyer } = await getCheckoutProduct(id, session.user.id);
-
-    return (
-      <main>
-        <nav>
-          <Link href={`/products/${product.id}`}>상품 상세로</Link>
-        </nav>
-
-        <section className="hero">
-          <p className="eyebrow">Checkout</p>
-          <h1>구매 확인</h1>
-          <p>
-            구매 버튼을 누르면 결제 금액이 내 잔액에서 빠져나가고 상품은 예약
-            상태가 됩니다. 판매자에게는 구매 확정 후 정산됩니다.
-          </p>
-        </section>
-
-        <section>
-          <h2>{product.title}</h2>
-          <p>{product.description}</p>
-          <p className="price">{product.price.toLocaleString()}원</p>
-          <p>판매자: {product.seller.nickname}</p>
-          <p>상품 상태: {product.status}</p>
-        </section>
-
-        <section className="wallet-card">
-          <h2>내 잔액</h2>
-          <p className="wallet-balance">{buyer.balance.toLocaleString()}원</p>
-          {buyer.balance < product.price && (
-            <p className="error">잔액이 부족합니다.</p>
-          )}
-        </section>
-
-        <CheckoutButton
-          productId={product.id}
-          disabled={buyer.balance < product.price || product.status !== "SELLING"}
-        />
-      </main>
-    );
+    checkoutData = await getCheckoutProduct(id, session.user.id);
   } catch (error) {
     if (error instanceof PurchaseNotFoundError) {
       notFound();
@@ -74,4 +38,44 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
     throw error;
   }
+
+  const { product, buyer } = checkoutData;
+
+  return (
+    <main>
+      <nav>
+        <Link href={`/products/${product.id}`}>상품 상세로</Link>
+      </nav>
+
+      <section className="hero">
+        <p className="eyebrow">Checkout</p>
+        <h1>구매 확인</h1>
+        <p>
+          구매 버튼을 누르면 결제 금액이 내 잔액에서 빠져나가고 상품은 예약
+          상태가 됩니다. 판매자에게는 구매 확정 후 정산됩니다.
+        </p>
+      </section>
+
+      <section>
+        <h2>{product.title}</h2>
+        <p>{product.description}</p>
+        <p className="price">{product.price.toLocaleString()}원</p>
+        <p>판매자: {product.seller.nickname}</p>
+        <p>상품 상태: {product.status}</p>
+      </section>
+
+      <section className="wallet-card">
+        <h2>내 잔액</h2>
+        <p className="wallet-balance">{buyer.balance.toLocaleString()}원</p>
+        {buyer.balance < product.price && (
+          <p className="error">잔액이 부족합니다.</p>
+        )}
+      </section>
+
+      <CheckoutButton
+        productId={product.id}
+        disabled={buyer.balance < product.price || product.status !== "SELLING"}
+      />
+    </main>
+  );
 }

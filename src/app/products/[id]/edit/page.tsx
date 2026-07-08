@@ -24,15 +24,10 @@ export default async function EditProductPage({
     redirect(`/login?callbackUrl=/products/${id}/edit`);
   }
 
-  try {
-    const product = await getProductForEdit(id, session.user.id);
+  let product: Awaited<ReturnType<typeof getProductForEdit>>;
 
-    return (
-      <main>
-        <h1>상품 수정</h1>
-        <EditProductForm product={product} />
-      </main>
-    );
+  try {
+    product = await getProductForEdit(id, session.user.id);
   } catch (error) {
     if (error instanceof ProductNotFoundError) {
       notFound();
@@ -44,4 +39,11 @@ export default async function EditProductPage({
 
     throw error;
   }
+
+  return (
+    <main>
+      <h1>상품 수정</h1>
+      <EditProductForm product={product} />
+    </main>
+  );
 }
