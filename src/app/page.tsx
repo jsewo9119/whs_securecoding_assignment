@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SecurityStory } from "./SecurityStory";
 
 export default function Home() {
   return (
@@ -20,6 +21,8 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      <SecurityStory />
     </main>
   );
 }
