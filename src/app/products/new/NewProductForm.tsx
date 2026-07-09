@@ -66,10 +66,24 @@ export function NewProductForm() {
         <input id="imageUrl" name="imageUrl" type="url" maxLength={2048} />
       </div>
 
-      <div>
-        <label htmlFor="isNegotiable">
-          <input id="isNegotiable" name="isNegotiable" type="checkbox" />
-          흥정 가능
+      <div className="switch-field">
+        <span>
+          <strong>흥정 가능</strong>
+          <small>구매자가 원하는 가격을 제안할 수 있게 합니다.</small>
+        </span>
+
+        <label className="toggle-switch" htmlFor="isNegotiable">
+          <input
+            id="isNegotiable"
+            name="isNegotiable"
+            type="checkbox"
+            className="toggle-input"
+          />
+          <span className="toggle-track">
+            <span className="toggle-text toggle-text-off">OFF</span>
+            <span className="toggle-text toggle-text-on">ON</span>
+            <span className="toggle-thumb" />
+          </span>
         </label>
       </div>
 
