@@ -94,13 +94,27 @@ openssl rand -base64 32
 
 로컬 PostgreSQL을 사용하거나 Docker로 PostgreSQL을 실행할 수 있습니다.
 
-Docker 예시:
+Docker를 사용할 경우 `.env.docker.example`을 복사해 `.env.docker` 파일을 만들고 값을 설정합니다.
+
+```bash
+cp .env.docker.example .env.docker
+```
+
+`.env.docker` 예시:
+
+```env
+POSTGRES_USER="tiny_market_user"
+POSTGRES_PASSWORD="your_password"
+POSTGRES_DB="tiny_market"
+```
+
+주의: `.env.docker`에는 DB 비밀번호가 들어가므로 Git에 올리면 안 됩니다. 대신 `.env.docker.example`만 Git에 포함합니다.
+
+Docker 실행 예시:
 
 ```bash
 docker run --name tiny-market-postgres \
-  -e POSTGRES_USER=tiny_market_user \
-  -e POSTGRES_PASSWORD=your_password \
-  -e POSTGRES_DB=tiny_market \
+  --env-file .env.docker \
   -p 127.0.0.1:5432:5432 \
   -v tiny-market-postgres-data:/var/lib/postgresql/data \
   -d postgres:17-alpine
