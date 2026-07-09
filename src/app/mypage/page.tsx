@@ -25,10 +25,38 @@ export default async function MyPage() {
         <p className="wallet-balance">{wallet.balance.toLocaleString()}원</p>
 
         <div className="action-row">
+          <Link href="/wallet/charge" className="button-link">
+            충전 요청
+          </Link>
           <Link href="/transfers/new" className="button-link">
             송금하기
           </Link>
         </div>
+      </section>
+
+      <section>
+        <h2>최근 충전 요청</h2>
+
+        {wallet.chargeRequests.length === 0 ? (
+          <p>충전 요청 내역이 없습니다.</p>
+        ) : (
+          <ul>
+            {wallet.chargeRequests.map((chargeRequest) => (
+              <li key={chargeRequest.id}>
+                <p>금액: +{chargeRequest.amount.toLocaleString()}원</p>
+                <p>상태: {chargeRequest.status}</p>
+                {chargeRequest.memo && <p>메모: {chargeRequest.memo}</p>}
+                <p>요청일: {chargeRequest.createdAt.toLocaleString("ko-KR")}</p>
+                {chargeRequest.approvedAt && (
+                  <p>승인일: {chargeRequest.approvedAt.toLocaleString("ko-KR")}</p>
+                )}
+                {chargeRequest.rejectedAt && (
+                  <p>거절일: {chargeRequest.rejectedAt.toLocaleString("ko-KR")}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section>

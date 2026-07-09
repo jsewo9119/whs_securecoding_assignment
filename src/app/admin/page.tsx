@@ -19,6 +19,9 @@ export default async function AdminPage() {
           <Link href="/admin/products" className="button-link">
             상품 관리
           </Link>
+          <Link href="/admin/charges" className="button-link">
+            충전 요청 관리
+          </Link>
         </div>
       </section>
     </main>

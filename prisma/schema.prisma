@@ -42,6 +42,12 @@ enum OfferStatus {
   REJECTED
 }
 
+enum ChargeRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id           String     @id @default(cuid())
   email        String     @unique
@@ -59,12 +65,13 @@ model User {
   buyingConversations  Conversation[] @relation("BuyerConversations")
   messages             Message[]
 
-  sentTransfers     Transfer[] @relation("SentTransfers")
-  receivedTransfers Transfer[] @relation("ReceivedTransfers")
-  purchases         Purchase[] @relation("BuyerPurchases")
-  sales             Purchase[] @relation("SellerPurchases")
-  sentOffers        Offer[]    @relation("BuyerOffers")
-  receivedOffers    Offer[]    @relation("SellerOffers")
+  sentTransfers     Transfer[]      @relation("SentTransfers")
+  receivedTransfers Transfer[]      @relation("ReceivedTransfers")
+  purchases         Purchase[]      @relation("BuyerPurchases")
+  sales             Purchase[]      @relation("SellerPurchases")
+  sentOffers        Offer[]         @relation("BuyerOffers")
+  receivedOffers    Offer[]         @relation("SellerOffers")
+  chargeRequests    ChargeRequest[]
 }
 
 model Product {
@@ -184,4 +191,21 @@ model Offer {
   @@index([buyerId, createdAt])
   @@index([sellerId, createdAt])
   @@index([conversationId])
+}
+
+model ChargeRequest {
+  id         String              @id @default(cuid())
+  userId     String
+  amount     Int
+  memo       String?
+  status     ChargeRequestStatus @default(PENDING)
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  approvedAt DateTime?
+  rejectedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
 }

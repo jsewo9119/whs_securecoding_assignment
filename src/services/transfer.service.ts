@@ -110,6 +110,21 @@ export async function getMyWallet(userId: string) {
       email: true,
       nickname: true,
       balance: true,
+      chargeRequests: {
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 10,
+        select: {
+          id: true,
+          amount: true,
+          memo: true,
+          status: true,
+          createdAt: true,
+          approvedAt: true,
+          rejectedAt: true,
+        },
+      },
       sentTransfers: {
         orderBy: {
           createdAt: "desc",
