@@ -9,7 +9,11 @@ type ProductActionsProps = {
   currentStatus: string;
 };
 
-
+const PRODUCT_STATUS_OPTIONS = [
+  { value: "SELLING", label: "판매중" },
+  { value: "RESERVED", label: "예약" },
+  { value: "SOLD", label: "판매 완료" },
+] as const;
 
 export function ProductActions({ productId, currentStatus }: ProductActionsProps) {
   const router = useRouter();
@@ -68,25 +72,55 @@ export function ProductActions({ productId, currentStatus }: ProductActionsProps
   }
 
   return (
-    <div>
-      <Link href={`/products/${productId}/edit`}>수정</Link>
+    <section className="seller-action-card">
+      <div className="seller-action-header">
+        <p className="seller-tools-label">Seller tools</p>
 
-      <button type="button" onClick={handleDelete} disabled={isDeleting}>
-        {isDeleting ? "삭제 중..." : "삭제"}
-      </button>
-
-      <label htmlFor="status">상품 상태</label>
-        <select
-        id="status"
-        value={status}
-        onChange={(event) => handleStatusChange(event.target.value)}
+        <div className="seller-quick-actions">
+        <Link
+          href={`/products/${productId}/edit`}
+            className="seller-mini-action"
         >
-        <option value="SELLING">판매중</option>
-        <option value="RESERVED">예약중</option>
-        <option value="SOLD">판매완료</option>
-        </select>
+          수정
+        </Link>
 
-      {errorMessage && <p>{errorMessage}</p>}
-    </div>
+        <button
+          type="button"
+            className="seller-mini-action danger"
+          onClick={handleDelete}
+          disabled={isDeleting}
+        >
+          {isDeleting ? "삭제 중..." : "삭제"}
+        </button>
+        </div>
+      </div>
+
+      <div className="seller-status-control">
+        <p className="seller-status-label">상태 변경</p>
+        <div
+          className={`status-segmented status-segmented-${status.toLowerCase()}`}
+          role="radiogroup"
+          aria-label="상품 상태"
+        >
+          <span className="status-segmented-indicator" aria-hidden="true" />
+
+          {PRODUCT_STATUS_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className="status-segmented-option"
+              role="radio"
+              aria-checked={status === option.value}
+              disabled={status === option.value}
+              onClick={() => handleStatusChange(option.value)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {errorMessage && <p className="error">{errorMessage}</p>}
+    </section>
   );
 }
