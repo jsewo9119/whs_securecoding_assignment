@@ -44,9 +44,11 @@ export function ReplyMessageForm({ conversationId }: ReplyMessageFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="content">답장</label>
+    <form onSubmit={handleSubmit} className="chat-compose">
+      <div className="chat-compose-field">
+        <label htmlFor="content" className="sr-only">
+          답장
+        </label>
         <textarea
           id="content"
           name="content"
@@ -57,7 +59,7 @@ export function ReplyMessageForm({ conversationId }: ReplyMessageFormProps) {
         />
       </div>
 
-      {errorMessage && <p>{errorMessage}</p>}
+      {errorMessage && <p className="error">{errorMessage}</p>}
 
       <button type="submit" disabled={isSubmitting}>
         {isSubmitting ? "전송 중..." : "보내기"}
