@@ -25,17 +25,22 @@ export function ProductsSearchForm({ defaultQuery = "" }: ProductsSearchFormProp
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="q">상품 검색</label>
+    <form onSubmit={handleSubmit} className="market-search-form">
+      <label htmlFor="q" className="sr-only">
+        상품 검색
+      </label>
       <input
+        className="market-search-input"
         id="q"
         name="q"
         type="search"
         defaultValue={defaultQuery}
         maxLength={80}
-        placeholder="상품명을 검색하세요"
+        placeholder="찾고 싶은 상품을 검색하세요"
       />
-      <button type="submit">검색</button>
+      <button className="market-search-button" type="submit" aria-label="상품 검색">
+        <span aria-hidden="true">⌕</span>
+      </button>
     </form>
   );
 }
