@@ -24,7 +24,10 @@ export const createProductSchema = z
     imageUrl: z
       .string()
       .trim()
-      .url("올바른 이미지 URL 형식이 아닙니다.")
+      .regex(
+        /^\/uploads\/products\/[a-f0-9-]+\.(png|jpg|jpeg)$/,
+        "올바른 상품 이미지 경로가 아닙니다.",
+      )
       .max(2048, "이미지 URL이 너무 깁니다.")
       .optional(),
 

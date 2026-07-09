@@ -15,20 +15,9 @@ export function NewProductForm() {
 
     const formData = new FormData(event.currentTarget);
 
-    const payload = {
-      title: formData.get("title"),
-      description: formData.get("description"),
-      price: Number(formData.get("price")),
-      imageUrl: formData.get("imageUrl") || undefined,
-      isNegotiable: formData.get("isNegotiable") === "on",
-    };
-
     const response = await fetch("/api/products", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
+      body: formData,
     });
 
     const data = await response.json();
@@ -62,8 +51,9 @@ export function NewProductForm() {
       </div>
 
       <div>
-        <label htmlFor="imageUrl">이미지 URL</label>
-        <input id="imageUrl" name="imageUrl" type="url" maxLength={2048} />
+        <label htmlFor="image">상품 이미지</label>
+        <input id="image" name="image" type="file" accept="image/png,image/jpeg" />
+        <p className="muted">png, jpg, jpeg 파일만 가능하며 최대 2MB까지 업로드할 수 있습니다.</p>
       </div>
 
       <div className="switch-field">

@@ -3,6 +3,10 @@ import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth/options";
 import { createProduct, listProducts } from "@/services/product.service";
 import { createProductSchema } from "@/lib/validations/product";
+import {
+  ProductImageUploadError,
+  saveProductImage,
+} from "@/lib/upload/product-image";
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
@@ -16,23 +20,46 @@ export async function POST(request: Request) {
 
   const contentType = request.headers.get("content-type");
 
-  if (!contentType?.includes("application/json")) {
+  if (!contentType?.includes("multipart/form-data")) {
     return NextResponse.json(
-      { message: "JSON 요청만 허용됩니다." },
+      { message: "multipart/form-data 요청만 허용됩니다." },
       { status: 415 },
     );
   }
 
-  let body: unknown;
+  let formData: FormData;
 
   try {
-    body = await request.json();
+    formData = await request.formData();
   } catch {
     return NextResponse.json(
-      { message: "올바른 JSON 형식이 아닙니다." },
+      { message: "올바른 form-data 형식이 아닙니다." },
       { status: 400 },
     );
   }
+
+  let imageUrl: string | undefined;
+
+  try {
+    const imageFile = formData.get("image");
+    imageUrl = await saveProductImage(
+      imageFile instanceof File ? imageFile : null,
+    );
+  } catch (error) {
+    if (error instanceof ProductImageUploadError) {
+      return NextResponse.json({ message: error.message }, { status: 400 });
+    }
+
+    throw error;
+  }
+
+  const body = {
+    title: formData.get("title"),
+    description: formData.get("description"),
+    price: Number(formData.get("price")),
+    imageUrl,
+    isNegotiable: formData.get("isNegotiable") === "on",
+  };
 
   const result = createProductSchema.safeParse(body);
 
